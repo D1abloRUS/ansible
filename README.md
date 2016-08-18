@@ -11,6 +11,7 @@
    * ``` #mail_settings ```
  * Укажите для каких версии гипервизоров Вам нужны патчи, в виде укороченных имен патчей.
    * ``` patch_name: ```
+   
 ### Обратите внимание, что данная роль запускается локально! И генерирует файлы для роли xenserver-update. 
 
 # xenserver-update role
@@ -25,6 +26,7 @@
 1. Внесите изменения в файл - xen-upd.yml
  * Измините следующие парметры на свои:
    * ``` hosts: xen-example ```
+   
    * ``` remote_user: root ```
 
 2. Если Вам требуется перезагрузка или рестарт службы xe-tooltask-restart после установки патчей, привидите файл xen-upd.yml к следующему виду:
@@ -36,6 +38,7 @@
   roles:
     - { role: xenserver-update, reboot: 1 }
 ```
+
  * xe-tooltask-restart:
 ```
 - hosts: xen-example
