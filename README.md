@@ -25,11 +25,11 @@
 ### Данная роль зависит от xenserver-update-downloader, сначала нужно запустить ее!
 1. Внесите изменения в файл - xen-upd.yml
  * Измините следующие парметры на свои:
-   ``` hosts: xen-example
+   * ``` hosts: xen-example
        remote_user: root ```
 
 2. Если Вам требуется перезагрузка или рестарт службы xe-tooltask-restart после установки патчей, привидите файл xen-upd.yml к следующему виду:
-* перезагрузка:
+  * перезагрузка:
 ```
 - hosts: xen-example
   gather_facts: False
@@ -38,7 +38,7 @@
     - { role: xenserver-update, reboot: 1 }
 ```
 
-* xe-tooltask-restart:
+  * xe-tooltask-restart:
 ```
 - hosts: xen-example
   gather_facts: False
