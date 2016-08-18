@@ -1,0 +1,30 @@
+{% for patch in patch_name %}
+- name: Download patch {{ '{{' }} item.name {{ '}}' }}
+  get_url:
+    url="{% raw %}{{ item.url }}{% endraw %}"
+    dest="{% raw %}{{ xenserver_update_role_path }}/files/{{ item.name }}.zip{% endraw %}"
+    timeout=120
+  register: result
+  when: item.name | match('{{ patch }}.*')
+
+- name: Generate {{ patch }}.yml
+  blockinfile:
+    dest: "{{ xenserver_update_role_path }}/tasks/{{ patch }}.yml"
+    create: yes
+    marker: "#"
+    block: |
+      - include: patch_apply.yml hotfix_id={{ '{{' }} item.name {{ '}}' }}
+  when: result.changed and item.name | match('{{ patch }}.*')
+{% raw %}
+- name: Send email
+  mail:
+    host='{{ mail_host }}'
+    port='{{ mail_port }}'
+    from='{{ mail_from }}'
+    to='{{ mail_to }}'
+{% endraw %}
+    subject='New XenServer {{ patch | regex_replace('([A-Z]\w)','') | regex_replace('(\d{1})(\d{1})','\\1.\\2') }} update available and loaded'
+    body='{% raw %}{{ item.name }} - {{ item.description }}{% endraw %}'
+  when: result.changed and item.name | match('{{ patch }}.*')
+
+{% endfor %}

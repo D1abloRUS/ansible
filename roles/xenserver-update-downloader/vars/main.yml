@@ -1,0 +1,16 @@
+xen_update_url: 'http://updates.xensource.com/XenServer/updates.xml'
+
+xenserver_update_role_path: '{{ playbook_dir }}/roles/xenserver-update'
+
+#mail_settings
+mail_host: 'smtp.example.com'
+mail_port: '25'
+mail_from: 'ansible@example.com'
+mail_to: 'adm@example.com'
+
+patch_name:
+  - XS62ESP1
+  - XS65ESP1
+  - XS70E0
+
+patch_list: []

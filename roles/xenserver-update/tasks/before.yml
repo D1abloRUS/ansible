@@ -1,0 +1,11 @@
+- name: Gathering facts
+  setup:
+
+- name: umount xe-tool to all vm
+  shell: for i in `xe vm-list is-control-domain=false --minimal | tr , '  '`;do xe vm-cd-eject vm=$i;done
+  ignore_errors: True
+
+- name: disable HA
+  shell: xe pool-ha-disable
+  register: result_ha
+  ignore_errors: True

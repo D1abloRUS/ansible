@@ -1,0 +1,25 @@
+- name: Generate download_patch.yml
+  template: src=download_patch.j2 dest={{ role_path }}/tasks/download_patch.yml
+
+- name: Generate main.yml
+  template: src=main.j2 dest={{ xenserver_update_role_path }}/tasks/main.yml
+
+- name: Get updates.xml
+  get_url: url={{ xen_update_url }} dest=/tmp/updates.xml
+
+- name: Parsing updates.xml
+  xml: file=/tmp/updates.xml xpath=/patchdata/patches/patch content='attribute' pretty_print=True
+  register: hits
+
+- name: Generate patch list
+  set_fact:
+    patch_list: "{{ patch_list + [ {'name': item.patch['name-label'], 'url': item.patch['patch-url'], 'description': item.patch['name-description']} ] }}"
+  with_items: "{{ hits.matches }}"
+ 
+- include: download_patch.yml
+  with_items: "{{ patch_list }}"
+
+- name: Delete updates.xml
+  file:
+    path=/tmp/updates.xml
+    state=absent

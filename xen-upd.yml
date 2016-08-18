@@ -1,0 +1,6 @@
+---
+- hosts: xen-example
+  gather_facts: False
+  remote_user: root
+  roles:
+  - xenserver-update

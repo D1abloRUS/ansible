@@ -1,0 +1,8 @@
+- include: before.yml
+
+{% for patch in patch_name %}
+- include: {{ patch }}.yml
+  when: ansible_os_family == 'RedHat' and ansible_distribution_version == "{{ patch | regex_replace('([A-Z]\w)','') | regex_replace('(\d{1})(\d{1})','\\1.\\2.0') }}"
+{% endfor %}
+
+- include: after.yml

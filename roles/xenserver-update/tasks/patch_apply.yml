@@ -1,0 +1,20 @@
+- name: Check And Apply XenServer Hotfix
+  shell: /opt/xensource/bin/xe patch-list | grep -qw {{ hotfix_id }}
+  register: result
+  changed_when: result|failed
+  ignore_errors: True
+
+- block:
+  - name: Unarchive {{ hotfix_id }}.zip
+    unarchive: src={{ hotfix_id }}.zip dest=/tmp
+
+  - name: Uploading patch {{ hotfix_id }} to XenServer
+    shell: /opt/xensource/bin/xe patch-upload file-name=/tmp/{{ hotfix_id }}.xsupdate
+    register: patch_id
+
+  - name: Applying {{ hotfix_id }}
+    shell: /opt/xensource/bin/xe patch-pool-apply uuid={{ patch_id.stdout }}
+
+  - name: Cleanup Hotfix {{ hotfix_id }} install files
+    shell: for i in `xe patch-list --minimal|tr "," " "`;do xe patch-pool-clean uuid=$i;done;find /var/patch /opt/xensource/patch-backup -maxdepth 1 | grep "[0-9]" | xargs rm -rf;rm -rf /tmp/XS*
+  when: result|failed

@@ -1,0 +1,11 @@
+- name: enable HA
+  shell: xe pool-ha-enable
+  when: result_ha.stderr == ""
+
+- name: Reboot
+  command: reboot
+  when: reboot == 1
+
+- name: toolstack-restart
+  shell: /opt/xensource/bin/xe-toolstack-restart
+  when: toolstack == 1
